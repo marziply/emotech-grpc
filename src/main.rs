@@ -4,6 +4,7 @@ pub mod server;
 use clap::{Parser, Subcommand};
 use client::send_data;
 use server::start_server;
+use std::error::Error;
 use std::path::PathBuf;
 
 #[derive(Debug, Parser)]
@@ -36,11 +37,13 @@ enum Command {
 }
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<(), Box<dyn Error>> {
   let App { command } = App::parse();
 
   match command {
     Command::Client { data } => send_data(data),
-    Command::Server => start_server().await,
+    Command::Server => start_server().await?,
   };
+
+  Ok(())
 }
