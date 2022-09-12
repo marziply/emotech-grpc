@@ -22,7 +22,7 @@ impl Service for DataService {
     let res = DataResponse { ok: true };
 
     match input.clone() {
-      Some(data) => println!("Received data: {data:#?}"),
+      Some(data) => println!("Received data: {data:?}"),
       None => println!("Error receiving data, corrupt input"),
     };
 
