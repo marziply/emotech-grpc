@@ -8,3 +8,9 @@ exchange various datatypes.
 ```sh
 cargo run
 ```
+
+## Test
+
+```sh
+cargo test
+```
