@@ -147,5 +147,12 @@ mod tests {
   }
 
   #[tokio::test]
-  async fn receive_file() {}
+  async fn receive_file() {
+    let data = vec![1, 2, 3, 4, 5];
+    let input = Input::FileData(data.clone());
+    let DataResponse { ok, output } = test_request(input).await;
+
+    assert!(ok);
+    assert_eq!(output.unwrap(), Output::FileData(data));
+  }
 }

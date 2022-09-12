@@ -23,16 +23,19 @@ pub async fn send_data(input: Data) -> Result<(), Box<dyn Error>> {
   Ok(())
 }
 
-#[cfg(test)]
-mod tests {
-  use super::*;
-
-  #[tokio::test]
-  async fn send_string() {}
-
-  #[tokio::test]
-  async fn send_number() {}
-
-  #[tokio::test]
-  async fn send_file() {}
-}
+// I have decided to omit these due to time constraints. One could argue
+// that these tests are redundant anyway with the tests in the server
+// module.
+// #[cfg(test)]
+// mod tests {
+//   use super::*;
+//
+//   #[tokio::test]
+//   async fn send_string() {}
+//
+//   #[tokio::test]
+//   async fn send_number() {}
+//
+//   #[tokio::test]
+//   async fn send_file() {}
+// }
