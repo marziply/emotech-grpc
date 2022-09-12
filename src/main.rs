@@ -1,3 +1,6 @@
+pub mod client;
+pub mod server;
+
 use clap::{Parser, Subcommand};
 use std::path::PathBuf;
 
