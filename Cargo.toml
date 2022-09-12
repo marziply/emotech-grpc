@@ -6,6 +6,10 @@ edition = "2021"
 [dependencies]
 tonic = "0.8.1"
 
+[dependencies.tokio]
+version = "1.21.0"
+features = ["full"]
+
 [dependencies.clap]
 version = "3.2.20"
 features = ["derive"]

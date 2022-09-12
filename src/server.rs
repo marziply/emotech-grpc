@@ -1,1 +1,1 @@
-pub fn start_server() {}
+pub async fn start_server() {}

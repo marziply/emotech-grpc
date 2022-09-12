@@ -35,11 +35,12 @@ enum Command {
   Server,
 }
 
-fn main() {
+#[tokio::main]
+async fn main() {
   let App { command } = App::parse();
 
   match command {
     Command::Client { data } => send_data(data),
-    Command::Server => start_server(),
+    Command::Server => start_server().await,
   };
 }
