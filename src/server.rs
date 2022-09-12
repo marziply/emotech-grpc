@@ -2,6 +2,7 @@ use self::service::service_server::{Service, ServiceServer};
 use self::service::{DataRequest, DataResponse};
 use std::error::Error;
 use std::net::SocketAddr;
+use tonic::codegen::CompressionEncoding;
 use tonic::transport::Server;
 use tonic::{Request, Response, Status};
 
@@ -31,13 +32,15 @@ impl Service for DataService {
 }
 
 pub async fn start_server() -> Result<(), Box<dyn Error>> {
-  let svc = DataService::default();
   let addr = SocketAddr::from(([0, 0, 0, 0], 50051));
+  let service = ServiceServer::new(DataService::default())
+    .send_compressed(CompressionEncoding::Gzip)
+    .accept_compressed(CompressionEncoding::Gzip);
 
   println!("Server listening on {addr:#?}");
 
   Server::builder()
-    .add_service(ServiceServer::new(svc))
+    .add_service(service)
     .serve(addr)
     .await?;
 

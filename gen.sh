@@ -1,5 +1,8 @@
 #!/bin/bash
 
-# Generates a 2GB file of random data
+# Generates a file of random data
 
-head -c 2G < /dev/urandom > data.bin
+# Not enough time to implement streaming/chunking of data
+# head -c 2G < /dev/urandom > data.bin
+
+head -c 100M < /dev/urandom > data.bin
