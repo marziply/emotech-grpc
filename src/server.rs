@@ -16,11 +16,15 @@ struct DataService;
 impl Service for DataService {
   async fn send_data(
     &self,
-    _: Request<DataRequest>,
+    req: Request<DataRequest>,
   ) -> Result<Response<DataResponse>, Status> {
-    println!("Received request");
-
+    let DataRequest { input } = req.get_ref();
     let res = DataResponse { ok: true };
+
+    match input.clone() {
+      Some(data) => println!("Received data: {data:#?}"),
+      None => println!("Error receiving data, corrupt input"),
+    };
 
     Ok(Response::new(res))
   }
