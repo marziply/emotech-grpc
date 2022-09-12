@@ -13,3 +13,6 @@ features = ["full"]
 [dependencies.clap]
 version = "3.2.20"
 features = ["derive"]
+
+[build-dependencies]
+tonic-build = "0.8.0"
