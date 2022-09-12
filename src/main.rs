@@ -49,7 +49,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
   let App { command } = App::parse();
 
   match command {
-    Command::Client { data } => send_data(data.get_data()),
+    Command::Client { data } => send_data(data.get_data()).await?,
     Command::Server => start_server().await?,
   };
 
