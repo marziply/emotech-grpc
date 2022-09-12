@@ -7,6 +7,8 @@ use server::service::data_request::Input;
 use server::service::DataRequest;
 use server::start_server;
 use std::error::Error;
+use std::fs::read;
+use std::path::PathBuf;
 
 #[derive(Debug, Parser)]
 #[clap(author, version, about)]
@@ -25,7 +27,7 @@ enum Sender {
 pub enum Data {
   r#String { data: String },
   Number { data: i32 },
-  File { path: String },
+  File { path: PathBuf },
 }
 
 #[derive(Debug, Subcommand)]
@@ -50,7 +52,15 @@ impl From<Data> for DataRequest {
     let output = match input {
       Data::r#String { data } => Input::StringData(data),
       Data::Number { data } => Input::NumberData(data),
-      Data::File { path } => Input::FilePath(path),
+      Data::File { path } => {
+        println!("Reading input file");
+
+        let bytes = read(path).expect("File cannot be found");
+
+        println!("Read completed");
+
+        Input::FileData(bytes)
+      }
     };
 
     DataRequest {

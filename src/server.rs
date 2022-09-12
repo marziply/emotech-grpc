@@ -1,3 +1,4 @@
+use self::service::data_request::Input;
 use self::service::service_server::{Service, ServiceServer};
 use self::service::{DataRequest, DataResponse};
 use std::error::Error;
@@ -23,7 +24,10 @@ impl Service for DataService {
     let res = DataResponse { ok: true };
 
     match input.clone() {
-      Some(data) => println!("Received data: {data:?}"),
+      Some(data) => match data {
+        Input::FileData(buf) => println!("Received file: {} bytes", buf.len()),
+        _ => println!("Received data: {data:?}"),
+      },
       None => println!("Error receiving data, corrupt input"),
     };
 

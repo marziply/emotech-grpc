@@ -10,7 +10,7 @@ message DataRequest {
   oneof input {
     string string_data = 1;
     int32 number_data = 2;
-    string file_path = 3;
+    bytes file_data = 3;
   }
 }
 
