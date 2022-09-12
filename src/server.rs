@@ -112,27 +112,39 @@ mod tests {
     (done, client)
   }
 
-  #[tokio::test]
-  async fn receive_string() {
+  async fn test_request(data: Input) -> DataResponse {
     let (done, mut client) = init().await;
-    let data = String::from("Hello world!");
-    let req = Request::new(DataRequest {
-      input: Some(Input::StringData(data.clone())),
-    });
-    let DataResponse { ok, output } = client
+    let req = Request::new(DataRequest { input: Some(data) });
+    let res = client
       .send_data(req)
       .await
       .unwrap()
       .into_inner();
 
-    assert!(ok);
-    assert_eq!(output.unwrap(), Output::StringData(data.clone()));
-
     done();
+
+    res
   }
 
   #[tokio::test]
-  async fn receive_number() {}
+  async fn receive_string() {
+    let data = String::from("Hello world!");
+    let input = Input::StringData(data.clone());
+    let DataResponse { ok, output } = test_request(input).await;
+
+    assert!(ok);
+    assert_eq!(output.unwrap(), Output::StringData(data.clone()));
+  }
+
+  #[tokio::test]
+  async fn receive_number() {
+    let data = 123;
+    let input = Input::NumberData(data);
+    let DataResponse { ok, output } = test_request(input).await;
+
+    assert!(ok);
+    assert_eq!(output.unwrap(), Output::NumberData(data));
+  }
 
   #[tokio::test]
   async fn receive_file() {}
