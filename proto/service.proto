@@ -3,7 +3,7 @@ syntax = "proto3";
 package emotech_service;
 
 service Service {
-  rpc ReceiveData(DataRequest) returns (DataResponse);
+  rpc SendData(DataRequest) returns (DataResponse);
 }
 
 message DataRequest {

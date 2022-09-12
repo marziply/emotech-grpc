@@ -14,7 +14,7 @@ struct DataService;
 
 #[tonic::async_trait]
 impl Service for DataService {
-  async fn receive_data(
+  async fn send_data(
     &self,
     _: Request<DataRequest>,
   ) -> Result<Response<DataResponse>, Status> {

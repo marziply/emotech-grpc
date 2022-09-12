@@ -12,7 +12,7 @@ pub async fn send_data(data: Data) -> Result<(), Box<dyn Error>> {
   let req = Request::new(DataRequest {
     input: Some(Input::StringData(String::new())),
   });
-  let res = client.receive_data(req).await?;
+  let res = client.send_data(req).await?;
 
   println!("{res:#?}");
 
