@@ -2,6 +2,8 @@ pub mod client;
 pub mod server;
 
 use clap::{Parser, Subcommand};
+use client::send_data;
+use server::start_server;
 use std::path::PathBuf;
 
 #[derive(Debug, Parser)]
@@ -34,7 +36,10 @@ enum Command {
 }
 
 fn main() {
-  let app = App::parse();
+  let App { command } = App::parse();
 
-  println!("{app:#?}");
+  match command {
+    Command::Client { data } => send_data(data),
+    Command::Server => start_server(),
+  };
 }
