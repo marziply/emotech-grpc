@@ -21,7 +21,7 @@ enum Sender {
 }
 
 #[derive(Debug, Subcommand)]
-enum Data {
+pub enum Data {
   r#String { data: String },
   Number { data: i32 },
   File { path: PathBuf },
@@ -36,12 +36,20 @@ enum Command {
   Server,
 }
 
+impl Sender {
+  fn get_data(self) -> Data {
+    match self {
+      Sender::r#Send(data) => data,
+    }
+  }
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
   let App { command } = App::parse();
 
   match command {
-    Command::Client { data } => send_data(data),
+    Command::Client { data } => send_data(data.get_data()),
     Command::Server => start_server().await?,
   };
 
