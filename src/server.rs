@@ -7,6 +7,8 @@ use tonic::codegen::CompressionEncoding;
 use tonic::transport::Server;
 use tonic::{Request, Response, Status};
 
+pub const ADDRESS: &str = "http://0.0.0.0:50051";
+
 pub mod service {
   tonic::include_proto!("emotech_service");
 }
@@ -53,14 +55,55 @@ pub async fn start_server() -> Result<(), Box<dyn Error>> {
 
 #[cfg(test)]
 mod tests {
-  use super::*;
+  use super::service::service_client::ServiceClient;
+  use super::service::service_server::ServiceServer;
+  use super::{DataService, ADDRESS};
+  use futures::future::BoxFuture;
+  use futures::FutureExt;
+  use std::time::Duration;
+  use tokio::spawn;
+  use tokio::sync::oneshot::channel;
+  use tokio::time::sleep;
+  use tonic::transport::{Channel, Server};
 
-  #[test]
-  fn receive_string() {}
+  async fn init() -> (
+    impl FnOnce() -> BoxFuture<'static, ()>,
+    ServiceClient<Channel>,
+  ) {
+    let (tx, rx) = channel::<()>();
+    let addr = ADDRESS.parse().unwrap();
+    let svc = ServiceServer::new(DataService::default());
+    let handle = spawn(async move {
+      Server::builder()
+        .add_service(svc)
+        .serve_with_shutdown(addr, rx.map(drop))
+        .await
+        .unwrap();
+    });
+    let done = || {
+      let run = async {
+        tx.send(()).unwrap();
+        handle.await.unwrap();
+      };
 
-  #[test]
-  fn receive_number() {}
+      run.boxed()
+    };
 
-  #[test]
-  fn receive_file() {}
+    sleep(Duration::from_millis(100)).await;
+
+    let client = ServiceClient::connect("http://127.0.0.1:1338")
+      .await
+      .unwrap();
+
+    (done, client)
+  }
+
+  #[tokio::test]
+  async fn receive_string() {}
+
+  #[tokio::test]
+  async fn receive_number() {}
+
+  #[tokio::test]
+  async fn receive_file() {}
 }

@@ -1,10 +1,9 @@
 use crate::server::service::service_client::ServiceClient;
+use crate::server::ADDRESS;
 use crate::Data;
 use std::error::Error;
 use tonic::codegen::CompressionEncoding;
 use tonic::Request;
-
-const ADDRESS: &str = "http://0.0.0.0:50051";
 
 pub async fn send_data(input: Data) -> Result<(), Box<dyn Error>> {
   let client = ServiceClient::connect(ADDRESS).await?;
@@ -27,12 +26,12 @@ pub async fn send_data(input: Data) -> Result<(), Box<dyn Error>> {
 mod tests {
   use super::*;
 
-  #[test]
-  fn send_string() {}
+  #[tokio::test]
+  async fn send_string() {}
 
-  #[test]
-  fn send_number() {}
+  #[tokio::test]
+  async fn send_number() {}
 
-  #[test]
-  fn send_file() {}
+  #[tokio::test]
+  async fn send_file() {}
 }
