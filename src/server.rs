@@ -50,3 +50,17 @@ pub async fn start_server() -> Result<(), Box<dyn Error>> {
 
   Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn receive_string() {}
+
+  #[test]
+  fn receive_number() {}
+
+  #[test]
+  fn receive_file() {}
+}

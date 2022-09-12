@@ -22,3 +22,17 @@ pub async fn send_data(input: Data) -> Result<(), Box<dyn Error>> {
 
   Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn send_string() {}
+
+  #[test]
+  fn send_number() {}
+
+  #[test]
+  fn send_file() {}
+}
