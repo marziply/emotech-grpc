@@ -16,4 +16,9 @@ message DataRequest {
 
 message DataResponse {
   bool ok = 1;
+  oneof output {
+    string string_data = 2;
+    int32 number_data = 3;
+    bytes file_data = 4;
+  }
 }

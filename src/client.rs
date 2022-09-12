@@ -6,7 +6,8 @@ use tonic::codegen::CompressionEncoding;
 use tonic::Request;
 
 pub async fn send_data(input: Data) -> Result<(), Box<dyn Error>> {
-  let client = ServiceClient::connect(ADDRESS).await?;
+  let addr = format!("http://{ADDRESS}");
+  let client = ServiceClient::connect(addr).await?;
   let req = Request::new(input.into());
 
   println!("Sending data");

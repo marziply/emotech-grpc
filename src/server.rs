@@ -1,4 +1,5 @@
 use self::service::data_request::Input;
+use self::service::data_response::Output;
 use self::service::service_server::{Service, ServiceServer};
 use self::service::{DataRequest, DataResponse};
 use std::error::Error;
@@ -7,7 +8,7 @@ use tonic::codegen::CompressionEncoding;
 use tonic::transport::Server;
 use tonic::{Request, Response, Status};
 
-pub const ADDRESS: &str = "http://0.0.0.0:50051";
+pub const ADDRESS: &str = "0.0.0.0:50051";
 
 pub mod service {
   tonic::include_proto!("emotech_service");
@@ -23,7 +24,15 @@ impl Service for DataService {
     req: Request<DataRequest>,
   ) -> Result<Response<DataResponse>, Status> {
     let DataRequest { input } = req.get_ref();
-    let res = DataResponse { ok: true };
+    let output = match input.clone().unwrap() {
+      Input::StringData(v) => Output::StringData(v),
+      Input::NumberData(v) => Output::NumberData(v),
+      Input::FileData(v) => Output::FileData(v),
+    };
+    let res = DataResponse {
+      ok: true,
+      output: Some(output),
+    };
 
     match input.clone() {
       Some(data) => match data {
@@ -55,8 +64,11 @@ pub async fn start_server() -> Result<(), Box<dyn Error>> {
 
 #[cfg(test)]
 mod tests {
+  use super::service::data_request::Input;
+  use super::service::data_response::Output;
   use super::service::service_client::ServiceClient;
   use super::service::service_server::ServiceServer;
+  use super::service::{DataRequest, DataResponse};
   use super::{DataService, ADDRESS};
   use futures::future::BoxFuture;
   use futures::FutureExt;
@@ -65,6 +77,7 @@ mod tests {
   use tokio::sync::oneshot::channel;
   use tokio::time::sleep;
   use tonic::transport::{Channel, Server};
+  use tonic::Request;
 
   async fn init() -> (
     impl FnOnce() -> BoxFuture<'static, ()>,
@@ -91,7 +104,8 @@ mod tests {
 
     sleep(Duration::from_millis(100)).await;
 
-    let client = ServiceClient::connect("http://127.0.0.1:1338")
+    let addr = format!("http://{ADDRESS}");
+    let client = ServiceClient::connect(addr)
       .await
       .unwrap();
 
@@ -99,7 +113,23 @@ mod tests {
   }
 
   #[tokio::test]
-  async fn receive_string() {}
+  async fn receive_string() {
+    let (done, mut client) = init().await;
+    let data = String::from("Hello world!");
+    let req = Request::new(DataRequest {
+      input: Some(Input::StringData(data.clone())),
+    });
+    let DataResponse { ok, output } = client
+      .send_data(req)
+      .await
+      .unwrap()
+      .into_inner();
+
+    assert!(ok);
+    assert_eq!(output.unwrap(), Output::StringData(data.clone()));
+
+    done();
+  }
 
   #[tokio::test]
   async fn receive_number() {}
