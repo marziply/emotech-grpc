@@ -3,9 +3,10 @@ pub mod server;
 
 use clap::{Parser, Subcommand};
 use client::send_data;
+use server::service::data_request::Input;
+use server::service::DataRequest;
 use server::start_server;
 use std::error::Error;
-use std::path::PathBuf;
 
 #[derive(Debug, Parser)]
 #[clap(author, version, about)]
@@ -24,7 +25,7 @@ enum Sender {
 pub enum Data {
   r#String { data: String },
   Number { data: i32 },
-  File { path: PathBuf },
+  File { path: String },
 }
 
 #[derive(Debug, Subcommand)]
@@ -40,6 +41,20 @@ impl Sender {
   fn get_data(self) -> Data {
     match self {
       Sender::r#Send(data) => data,
+    }
+  }
+}
+
+impl From<Data> for DataRequest {
+  fn from(input: Data) -> Self {
+    let output = match input {
+      Data::r#String { data } => Input::StringData(data),
+      Data::Number { data } => Input::NumberData(data),
+      Data::File { path } => Input::FilePath(path),
+    };
+
+    DataRequest {
+      input: Some(output),
     }
   }
 }
